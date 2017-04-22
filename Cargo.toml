@@ -1,0 +1,6 @@
+[package]
+name = "curvesynth"
+version = "0.0.0"
+authors = ["Guillaume Riou"]
+[dependencies]
+portaudio = "0.7.0"
