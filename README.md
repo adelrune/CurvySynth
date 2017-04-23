@@ -1,2 +1,2 @@
-# curvesynth
+# CurvySynth
 Curve defined additive synthesizer

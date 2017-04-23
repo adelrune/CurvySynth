@@ -1,8 +1,9 @@
 extern crate portaudio;
 
 use portaudio as pa;
-mod oscillators;
-use oscillators::Osc;
+mod audio_objects;
+use audio_objects::Osc;
+use audio_objects::Audio;
 
 const CHANNELS: i32 = 1;
 const NUM_SECONDS: i32 = 5;
@@ -16,8 +17,8 @@ fn main() {
 
 fn run() -> Result<(), pa::Error> {
 
-    let mut sine1: oscillators::SineTableOsc = oscillators::Osc::new(440.0, 1.0, SAMPLE_RATE as f32);
-    let mut sine2: oscillators::SineTableOsc = oscillators::Osc::new(1.0, 110.0, SAMPLE_RATE as f32);
+    let mut sine2: audio_objects::SineTableOsc = audio_objects::Osc::new(1, 1, 330,  SAMPLE_RATE as f32);
+    let mut sine1: audio_objects::SineTableOsc = audio_objects::Osc::new(&sine2, 1, 0, SAMPLE_RATE as f32);
 
     let pa = try!(pa::PortAudio::new());
 
@@ -26,7 +27,6 @@ fn run() -> Result<(), pa::Error> {
     let callback = move |pa::OutputStreamCallbackArgs { buffer, frames, .. }| {
         for idx in 0..frames {
             buffer[idx] = sine1.next();
-            sine1.freq = sine2.next() + 330.0;
         }
         pa::Continue
     };
