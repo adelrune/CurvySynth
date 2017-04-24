@@ -4,6 +4,8 @@ use portaudio as pa;
 mod audio_objects;
 use audio_objects::Osc;
 use audio_objects::Audio;
+use audio_objects::SineTableOsc;
+use std::sync::Arc;
 
 const CHANNELS: i32 = 1;
 const NUM_SECONDS: i32 = 5;
@@ -12,13 +14,19 @@ const FRAMES_PER_BUFFER: u32 = 64;
 
 
 fn main() {
-    run().unwrap()
+    unsafe{run().unwrap()}
 }
 
-fn run() -> Result<(), pa::Error> {
+unsafe fn run() -> Result<(), pa::Error> {
 
-    let mut sine2: audio_objects::SineTableOsc = audio_objects::Osc::new(1, 1, 330,  SAMPLE_RATE as f32);
-    let mut sine1: audio_objects::SineTableOsc = audio_objects::Osc::new(&sine2, 1, 0, SAMPLE_RATE as f32);
+    let mut freq: i32 = 330;
+    let mut offset: i32 = 110;
+    let mut change_freq: i32 = 1;
+    let mut amp: i32 = 1;
+    let mut add: i32 = 0;
+
+    let mut sine2: Arc<SineTableOsc<i32, i32, i32>> = Osc::new(&mut freq, &mut change_freq, &mut offset,  SAMPLE_RATE as f32);
+    let mut sine1: Arc<SineTableOsc<SineTableOsc<i32, i32, i32>, i32, i32>> = Osc::new(&mut sine2, &mut amp, &mut add, SAMPLE_RATE as f32);
 
     let pa = try!(pa::PortAudio::new());
 
@@ -41,4 +49,5 @@ fn run() -> Result<(), pa::Error> {
     try!(stream.close());
 
     Ok(())
+
 }
