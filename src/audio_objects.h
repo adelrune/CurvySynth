@@ -39,3 +39,9 @@ public:
     float next();
 using Oscillator::Oscillator;
 };
+
+class NaiveSineOsc: public Oscillator, public Audio {
+public:
+    float next();
+using Oscillator::Oscillator;
+};
