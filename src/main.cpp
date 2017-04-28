@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <vector>
 #include <math.h>
 #include "portaudio.h"
 #include "audio_objects.h"
@@ -7,22 +8,27 @@
 #define FRAMES_PER_BUFFER 64
 #define NUM_SECONDS 4
 
+int num_harms = 210;
+
 static int paCallback(const void* inputBuffer, void* outputBuffer, unsigned long framesPerBuffer,
     const PaStreamCallbackTimeInfo* timeInfo,
     PaStreamCallbackFlags statusFlags,
     void* userData) {
-    SineTableOsc* sine = (SineTableOsc*)userData;
+    std::vector<SineTableOsc>* sines = (std::vector<SineTableOsc>*)userData;
     float* out = (float*) outputBuffer;
-    unsigned long i;
+    int i;
 
     (void)timeInfo; /* Prevent unused variable warnings. */
     (void)statusFlags;
     (void)inputBuffer;
 
-    for (i = 0; i < framesPerBuffer; i++) { 
-        float sample = sine->next();
+    for (i = 0; i < framesPerBuffer; i++) {
+        float acc = 0.0;
+        for (int j = 0; j < num_harms; j++) {
+            acc += (*sines)[j].next();
+        }
+        float sample = acc/32;
         *(out+i) = sample;
-        //printf("%f", sample);
     }
 
     return paContinue;
@@ -37,10 +43,14 @@ int main() {
     PaStreamParameters outputParameters;
     PaStream * stream;
     PaError err;
-    SineTableOsc lfo = SineTableOsc(110, new SineTableOsc(5, 2, 35), 330.0);
-    SineTableOsc sine = SineTableOsc(1.0, &lfo, 0.0);
-    Sig a = Sig(3);
-    printf("%f %f %f\n", a.next(), lfo.freq->next(), sine.amp->next());
+    std::vector<SineTableOsc> sines;
+    sines.reserve(num_harms);
+    float fundamental = 110.0;
+    for (int i = 0; i < num_harms; i++) {
+        printf("freq: %f\n", (i+1.0)*fundamental);
+        sines.push_back(SineTableOsc(1.0/(i+1), (i+1.0)*fundamental, 0.0));
+    }
+
     err = Pa_Initialize();
     if (err != paNoError) goto error;
 
@@ -59,7 +69,7 @@ int main() {
         SAMPLE_RATE,
         FRAMES_PER_BUFFER,
         paClipOff,
-        paCallback, &sine);
+        paCallback, &sines);
     if (err != paNoError) goto error;
 
     err = Pa_SetStreamFinishedCallback(stream, & StreamFinished);

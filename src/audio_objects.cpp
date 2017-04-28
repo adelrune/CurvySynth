@@ -18,6 +18,8 @@ float lin_interpolate(float v1, float v2, float location) {
 
 float SineTableOsc::next() {
 
+    //printf("%f\n", cur_index);
+
     float val = lin_interpolate(sine_2048[(int)cur_index],
         sine_2048[(int)cur_index + 1],
         cur_index - floor(cur_index)
@@ -28,7 +30,6 @@ float SineTableOsc::next() {
     if (cur_index > (SINE_TABLE_SIZE - 1.0)) {
         cur_index -= SINE_TABLE_SIZE;
     }
-
     if(cur_index < 0) {
         cur_index = 0.0;
     }
