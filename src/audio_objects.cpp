@@ -17,15 +17,21 @@ float lin_interpolate(float v1, float v2, float location) {
 };
 
 float SineTableOsc::next() {
+
     float val = lin_interpolate(sine_2048[(int)cur_index],
         sine_2048[(int)cur_index + 1],
         cur_index - floor(cur_index)
     );
+
     cur_index += freq->next() * (SINE_TABLE_SIZE / SAMPLE_RATE);
-    printf("%f\n", freq->next());
-    if (cur_index > SINE_TABLE_SIZE - 1) {
-        printf("%f\n",cur_index);
+
+    if (cur_index > (SINE_TABLE_SIZE - 1.0)) {
         cur_index -= SINE_TABLE_SIZE;
     }
+
+    if(cur_index < 0) {
+        cur_index = 0.0;
+    }
+
     return val * amp->next() + add->next();
 }

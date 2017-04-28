@@ -11,7 +11,7 @@ static int paCallback(const void* inputBuffer, void* outputBuffer, unsigned long
     const PaStreamCallbackTimeInfo* timeInfo,
     PaStreamCallbackFlags statusFlags,
     void* userData) {
-    SineTableOsc sine = *((SineTableOsc*)userData);
+    SineTableOsc* sine = (SineTableOsc*)userData;
     float* out = (float*) outputBuffer;
     unsigned long i;
 
@@ -20,7 +20,7 @@ static int paCallback(const void* inputBuffer, void* outputBuffer, unsigned long
     (void)inputBuffer;
 
     for (i = 0; i < framesPerBuffer; i++) { 
-        float sample = sine.next();
+        float sample = sine->next();
         *(out+i) = sample;
         //printf("%f", sample);
     }
@@ -37,8 +37,8 @@ int main() {
     PaStreamParameters outputParameters;
     PaStream * stream;
     PaError err;
-    SineTableOsc lfo = SineTableOsc(330.0, 1.0, 110.0);
-    SineTableOsc sine = SineTableOsc(1.0, 60.0, 0.0);
+    SineTableOsc lfo = SineTableOsc(110, new SineTableOsc(5, 2, 35), 330.0);
+    SineTableOsc sine = SineTableOsc(1.0, &lfo, 0.0);
     Sig a = Sig(3);
     printf("%f %f %f\n", a.next(), lfo.freq->next(), sine.amp->next());
     err = Pa_Initialize();
