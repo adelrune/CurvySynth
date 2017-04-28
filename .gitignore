@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+synth
 #sublime things
 *.sublime-project
 *.sublime-workspace
