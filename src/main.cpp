@@ -8,7 +8,7 @@
 #define FRAMES_PER_BUFFER 64
 #define NUM_SECONDS 4
 
-int num_harms = 1;
+int num_harms = 50;
 
 static int paCallback(const void* inputBuffer, void* outputBuffer, unsigned long framesPerBuffer,
     const PaStreamCallbackTimeInfo* timeInfo,
