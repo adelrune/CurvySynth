@@ -19,6 +19,8 @@ float lin_interpolate(float v1, float v2, float location) {
 
 float SineTableOsc::next() {
 
+    cur_index = fmod(cur_index, SINE_TABLE_SIZE - 2);
+
     float val = lin_interpolate(sine_2048[(int)cur_index],
         sine_2048[(int)cur_index + 1],
         cur_index - floor(cur_index)
@@ -26,7 +28,6 @@ float SineTableOsc::next() {
 
     cur_index += freq->next() * (SINE_TABLE_SIZE / SAMPLE_RATE);
 
-    fmod(cur_index, SINE_TABLE_SIZE);
 
     return val * amp->next() + add->next();
 }
@@ -34,6 +35,6 @@ float SineTableOsc::next() {
 float NaiveSineOsc::next() {
     float val = sin(cur_index);
     cur_index += (freq->next() * 2 * PI) / SAMPLE_RATE;
-    fmod(cur_index, 2*PI);
+    cur_index = fmod(cur_index, 2*PI);
     return val * amp->next() + add->next();
 }
