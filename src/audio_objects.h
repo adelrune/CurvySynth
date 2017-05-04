@@ -45,3 +45,9 @@ public:
     float next();
 using Oscillator::Oscillator;
 };
+
+class PolySineOsc: public Oscillator, public Audio {
+public:
+    float next();
+using Oscillator::Oscillator;
+};

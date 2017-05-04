@@ -38,3 +38,18 @@ float NaiveSineOsc::next() {
     cur_index = fmod(cur_index, 2*PI);
     return val * amp->next() + add->next();
 }
+
+float PolySineOsc::next() {
+    //current index here is a triangle wave from -2 to 2
+    //based on the polynomial x-x^3/4+|x|*x^3/16 which looks suspectly like a sine wave :P
+
+    //triangle wave generator for the input
+    float tri_sample = 4.0/(SAMPLE_RATE/2.0) * ((SAMPLE_RATE/2.0) - fabs(fmod((cur_index + SAMPLE_RATE/4), (SAMPLE_RATE)) - (SAMPLE_RATE/2))) - 2.0
+
+    cur_index += freq->next();
+
+    float x3 = tri_sample * tri_sample * tri_sample;
+
+    float val = tri_sample - x3/4.0 + fabs(tri_sample) * x3/16.0;
+    return val * amp->next() + add->next();
+}
