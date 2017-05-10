@@ -51,3 +51,15 @@ public:
     float next();
 using Oscillator::Oscillator;
 };
+
+class RoughPolySineOsc: public Oscillator, public Audio {
+public:
+    float next();
+using Oscillator::Oscillator;
+};
+
+class NaiveTriangleOsc: public Oscillator, public Audio {
+public:
+    float next();
+using Oscillator::Oscillator;
+};

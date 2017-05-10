@@ -17,6 +17,7 @@ float lin_interpolate(float v1, float v2, float location) {
     return v1 * (1.0 - location) + v2 * location;
 };
 
+//Can play about 210
 float SineTableOsc::next() {
 
     cur_index = fmod(cur_index, SINE_TABLE_SIZE - 2);
@@ -32,6 +33,7 @@ float SineTableOsc::next() {
     return val * amp->next() + add->next();
 }
 
+//Can play about 50
 float NaiveSineOsc::next() {
     float val = sin(cur_index);
     cur_index += (freq->next() * 2 * PI) / SAMPLE_RATE;
@@ -39,17 +41,44 @@ float NaiveSineOsc::next() {
     return val * amp->next() + add->next();
 }
 
+//unbandlimited triangle oscillator. Can be used as an LFO.
+float NaiveTriangleOsc::next() {
+    cur_index = fmod(cur_index, SAMPLE_RATE);
+
+    float val = 2.0/(SAMPLE_RATE/2.0) * ((SAMPLE_RATE/2.0) - fabs(cur_index - (SAMPLE_RATE/2.0))) - 1.0;
+
+    cur_index += freq->next();
+
+    return val * amp->next() + add->next();
+}
+
+//Can play ~170
 float PolySineOsc::next() {
     //current index here is a triangle wave from -2 to 2
     //based on the polynomial x-x^3/4+|x|*x^3/16 which looks suspectly like a sine wave :P
 
+    cur_index = fmod(cur_index, SAMPLE_RATE);
     //triangle wave generator for the input
-    float tri_sample = 4.0/(SAMPLE_RATE/2.0) * ((SAMPLE_RATE/2.0) - fabs(fmod((cur_index + SAMPLE_RATE/4), (SAMPLE_RATE)) - (SAMPLE_RATE/2))) - 2.0
+    float tri_sample = 4.0/(SAMPLE_RATE/2.0) * ((SAMPLE_RATE/2.0) - fabs(cur_index - (SAMPLE_RATE/2.0))) - 2.0;
 
     cur_index += freq->next();
 
     float x3 = tri_sample * tri_sample * tri_sample;
 
     float val = tri_sample - x3/4.0 + fabs(tri_sample) * x3/16.0;
+    return val * amp->next() + add->next();
+}
+
+//Not much performance gain over PolySineOsc for a much rougher sound.
+float RoughPolySineOsc::next() {
+    //Like the above but a worse approximation with less operations
+    //based on (|x| - 2) * -x
+    cur_index = fmod(cur_index, SAMPLE_RATE);
+
+    float tri_sample = 4.0/(SAMPLE_RATE/2.0) * ((SAMPLE_RATE/2.0) - fabs(cur_index - (SAMPLE_RATE/2.0))) - 2.0;
+
+    cur_index += freq->next();
+
+    float val = (fabs(tri_sample) - 2.0) * -tri_sample;
     return val * amp->next() + add->next();
 }

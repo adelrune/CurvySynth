@@ -6,15 +6,17 @@
 
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 64
-#define NUM_SECONDS 4
+#define NUM_SECONDS 6
+#define OSCTYPE RoughPolySineOsc
 
-int num_harms = 210;
+int num_harms = 3;
+float fundamental = 80.0;
 
 static int paCallback(const void* inputBuffer, void* outputBuffer, unsigned long framesPerBuffer,
     const PaStreamCallbackTimeInfo* timeInfo,
     PaStreamCallbackFlags statusFlags,
     void* userData) {
-    std::vector<SineTableOsc>* sines = (std::vector<SineTableOsc>*)userData;
+    std::vector<OSCTYPE>* sines = (std::vector<OSCTYPE>*)userData;
     float* out = (float*) outputBuffer;
     int i;
 
@@ -43,12 +45,11 @@ int main() {
     PaStreamParameters outputParameters;
     PaStream * stream;
     PaError err;
-    std::vector<SineTableOsc> sines;
+    std::vector<OSCTYPE> sines;
     sines.reserve(num_harms);
-    float fundamental = 330.0;
     for (int i = 0; i < num_harms; i++) {
         printf("freq: %f\n", (i+1.0)*fundamental);
-        sines.push_back(SineTableOsc(1.0/(i+1), (i+1.0)*fundamental, 0.0));
+        sines.push_back(OSCTYPE(1.0/(i+1), (i+1.0)*fundamental, 0.0));
     }
 
     err = Pa_Initialize();
