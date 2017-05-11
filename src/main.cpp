@@ -7,7 +7,7 @@
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 64
 #define NUM_SECONDS 45
-#define OSCTYPE SineTableOsc
+#define OSCTYPE DirtSineOsc
 
 int num_harms = 1;
 double fundamental = 80.0;
@@ -42,19 +42,24 @@ static void StreamFinished(void* userData) {
 };
 
 //Tests multiple oscillators to create partials of a sound.
-void partial_test(std::vector<OSCTYPE>* sines) {
+/*void partial_test(std::vector<OSCTYPE>* sines) {
     sines->reserve(num_harms);
     for (int i = 0; i < num_harms; i++) {
         printf("freq: %f\n", (i+1.0) * fundamental);
         sines->push_back(OSCTYPE(1.0/(i+1), (i+1.0) * fundamental, 0.0));
     }
+}*/
+
+void dirt_test(std::vector<OSCTYPE>* sines){
+    sines->reserve(1);
+    sines->push_back(OSCTYPE(1.0, 110.0, 0.0, new NaiveTriangleOsc(0.5, 0.3, 0.5)));
 }
 
 //sweep from 20 to 20000hz using a triangle lfo.
-void sweep_test(std::vector<OSCTYPE>* sines) {
+/*void sweep_test(std::vector<OSCTYPE>* sines) {
     sines->reserve(1);
     sines->push_back(OSCTYPE(1.0, new NaiveTriangleOsc(9990.0, 0.01, 10010.0), 0.0));
-}
+}*/
 
 int main() {
     PaStreamParameters outputParameters;
@@ -62,7 +67,7 @@ int main() {
     PaError err;
     std::vector<OSCTYPE> sines;
 
-    sweep_test(&sines);
+    dirt_test(&sines);
 
     err = Pa_Initialize();
     if (err != paNoError) goto error;

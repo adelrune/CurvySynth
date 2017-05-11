@@ -81,3 +81,19 @@ double RoughPolySineOsc::next() {
     double val = (fabs(tri_sample) - 2.0) * - tri_sample;
     return val * amp->next() + add->next();
 }
+
+//Sine osc with a dirt parameter that linearly interpolates between the
+//rough and smooth poly sines. The parameter goes from 0 to 1, 0 being purely
+//the best approximation, 1 being the roughest.
+double DirtSineOsc::next() {
+    cur_index = fmod(cur_index, SAMPLE_RATE);
+    //triangle wave generator for the input
+    double tri_sample = 4.0/(SAMPLE_RATE/2.0) * ((SAMPLE_RATE/2.0) - fabs(cur_index - (SAMPLE_RATE/2.0))) - 2.0;
+
+    cur_index += freq->next();
+    double x3 = tri_sample * tri_sample * tri_sample;
+    double val = lin_interpolate(tri_sample - x3/4.0 + fabs(tri_sample) * x3/16.0,
+                          (fabs(tri_sample) - 2.0) * - tri_sample,
+                          dirt->next());
+    return val * amp->next() + add->next();
+}

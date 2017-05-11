@@ -63,3 +63,27 @@ public:
     double next();
 using Oscillator::Oscillator;
 };
+
+class DirtSineOsc: public Oscillator, public Audio {
+public:
+    //This constructor syntax is unwieldy... Should find something better.
+    DirtSineOsc(Audio* amp, Audio* freq, Audio* add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(double amp, double freq, double add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(Audio* amp, Audio* freq, double add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(Audio* amp, double freq, Audio* add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(double amp, Audio* freq, Audio* add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(double amp, double freq, Audio* add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(double amp, Audio* freq, double add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+    DirtSineOsc(Audio* amp, double freq, double add, Audio* dirt):Oscillator(amp, freq, add) {this->dirt = dirt;};
+
+    DirtSineOsc(Audio* amp, Audio* freq, Audio* add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(double amp, double freq, double add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(Audio* amp, Audio* freq, double add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(Audio* amp, double freq, Audio* add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(double amp, Audio* freq, Audio* add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(double amp, double freq, Audio* add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(double amp, Audio* freq, double add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    DirtSineOsc(Audio* amp, double freq, double add, double dirt):Oscillator(amp, freq, add) {this->dirt = new Sig(dirt);};
+    Audio* dirt;
+    double next();
+};
