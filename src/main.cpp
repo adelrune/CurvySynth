@@ -6,11 +6,11 @@
 
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 64
-#define NUM_SECONDS 6
-#define OSCTYPE RoughPolySineOsc
+#define NUM_SECONDS 45
+#define OSCTYPE SineTableOsc
 
-int num_harms = 3;
-float fundamental = 80.0;
+int num_harms = 1;
+double fundamental = 80.0;
 
 static int paCallback(const void* inputBuffer, void* outputBuffer, unsigned long framesPerBuffer,
     const PaStreamCallbackTimeInfo* timeInfo,
@@ -41,16 +41,28 @@ static void StreamFinished(void* userData) {
     return;
 };
 
+//Tests multiple oscillators to create partials of a sound.
+void partial_test(std::vector<OSCTYPE>* sines) {
+    sines->reserve(num_harms);
+    for (int i = 0; i < num_harms; i++) {
+        printf("freq: %f\n", (i+1.0) * fundamental);
+        sines->push_back(OSCTYPE(1.0/(i+1), (i+1.0) * fundamental, 0.0));
+    }
+}
+
+//sweep from 20 to 20000hz using a triangle lfo.
+void sweep_test(std::vector<OSCTYPE>* sines) {
+    sines->reserve(1);
+    sines->push_back(OSCTYPE(1.0, new NaiveTriangleOsc(9990.0, 0.01, 10010.0), 0.0));
+}
+
 int main() {
     PaStreamParameters outputParameters;
     PaStream * stream;
     PaError err;
     std::vector<OSCTYPE> sines;
-    sines.reserve(num_harms);
-    for (int i = 0; i < num_harms; i++) {
-        printf("freq: %f\n", (i+1.0)*fundamental);
-        sines.push_back(OSCTYPE(1.0/(i+1), (i+1.0)*fundamental, 0.0));
-    }
+
+    sweep_test(&sines);
 
     err = Pa_Initialize();
     if (err != paNoError) goto error;

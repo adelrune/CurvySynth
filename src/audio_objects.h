@@ -4,62 +4,62 @@
 
 class Audio {
 public:
-    virtual float next(){};
+    virtual double next(){};
 };
 
 class Sig :public Audio {
 public:
-    float val;
-    Sig(int val): val((float) val){};
-    Sig(float val): val(val){};
-    float next();
+    double val;
+    Sig(int val): val((double) val){};
+    Sig(double val): val(val){};
+    double next();
 };
 
-float lin_interpolate(float v1, float v2, float location);
+double lin_interpolate(double v1, double v2, double location);
 
 class Oscillator {
 protected:
-    float cur_index;
+    double cur_index;
 public:
     Audio* amp;
     Audio* freq;
     Audio* add;
     Oscillator(Audio* amp, Audio* freq, Audio* add): amp(amp), freq(freq), add(add), cur_index(0.0){};
-    Oscillator(float amp, float freq, float add): amp(new Sig(amp)), freq(new Sig(freq)), add(new Sig(add)), cur_index(0.0){};
-    Oscillator(Audio* amp, Audio* freq, float add): amp(amp), freq(freq), add(new Sig(add)), cur_index(0.0){};
-    Oscillator(Audio* amp, float freq, Audio* add): amp(amp), freq(new Sig(freq)), add(add), cur_index(0.0){};
-    Oscillator(float amp, Audio* freq, Audio* add): amp(new Sig(amp)), freq(freq), add(add), cur_index(0.0){};
-    Oscillator(float amp, float freq, Audio* add): amp(new Sig(amp)), freq(new Sig(freq)), add(add), cur_index(0.0){};
-    Oscillator(float amp, Audio* freq, float add): amp(new Sig(amp)), freq(freq), add(new Sig(add)), cur_index(0.0){};
-    Oscillator(Audio* amp, float freq, float add): amp(amp), freq(new Sig(freq)), add(new Sig(add)), cur_index(0.0){};
+    Oscillator(double amp, double freq, double add): amp(new Sig(amp)), freq(new Sig(freq)), add(new Sig(add)), cur_index(0.0){};
+    Oscillator(Audio* amp, Audio* freq, double add): amp(amp), freq(freq), add(new Sig(add)), cur_index(0.0){};
+    Oscillator(Audio* amp, double freq, Audio* add): amp(amp), freq(new Sig(freq)), add(add), cur_index(0.0){};
+    Oscillator(double amp, Audio* freq, Audio* add): amp(new Sig(amp)), freq(freq), add(add), cur_index(0.0){};
+    Oscillator(double amp, double freq, Audio* add): amp(new Sig(amp)), freq(new Sig(freq)), add(add), cur_index(0.0){};
+    Oscillator(double amp, Audio* freq, double add): amp(new Sig(amp)), freq(freq), add(new Sig(add)), cur_index(0.0){};
+    Oscillator(Audio* amp, double freq, double add): amp(amp), freq(new Sig(freq)), add(new Sig(add)), cur_index(0.0){};
 };
 
 class SineTableOsc: public Oscillator, public Audio {
 public:
-    float next();
+    double next();
 using Oscillator::Oscillator;
 };
 
 class NaiveSineOsc: public Oscillator, public Audio {
 public:
-    float next();
+    double next();
 using Oscillator::Oscillator;
 };
 
 class PolySineOsc: public Oscillator, public Audio {
 public:
-    float next();
+    double next();
 using Oscillator::Oscillator;
 };
 
 class RoughPolySineOsc: public Oscillator, public Audio {
 public:
-    float next();
+    double next();
 using Oscillator::Oscillator;
 };
 
 class NaiveTriangleOsc: public Oscillator, public Audio {
 public:
-    float next();
+    double next();
 using Oscillator::Oscillator;
 };
